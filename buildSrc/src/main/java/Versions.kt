@@ -19,7 +19,7 @@ object Versions {
     const val kotlin = "1.3.71"
     const val kotlinCoroutines = "1.3.0"
     const val picassoDiskCache = "1.+"
-    const val pxAddons = "4.+"
+    const val pxAddons = "LOCAL-4.98.0-13122021163435873"
     const val andesUi = "3.+"
 
     const val libraryVersion = "2.1.2"

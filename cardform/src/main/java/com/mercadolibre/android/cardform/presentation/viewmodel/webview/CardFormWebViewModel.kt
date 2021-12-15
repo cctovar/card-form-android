@@ -33,13 +33,13 @@ private const val TOKEN_DATA_EXTRA = "token_data"
 private const val TBK_TOKEN_KEY = "TBK_TOKEN"
 
 internal class CardFormWebViewModel(
-    private val inscriptionUseCase: InscriptionUseCase,
-    private val finishInscriptionUseCase: FinishInscriptionUseCase,
-    private val associatedCardUseCase: AssociatedCardUseCase,
-    private val tracker: CardFormTracker,
-    private val cardFormServiceManager: CardFormServiceManager?,
-    private val liveDataProvider: CardFormWebViewLiveDataProvider = CardFormWebViewLiveDataProvider,
-    private val flowRetryProvider: FlowRetryProvider = FlowRetryProvider
+        private val inscriptionUseCase: InscriptionUseCase,
+        private val finishInscriptionUseCase: FinishInscriptionUseCase,
+        private val associateCardUseCase: AssociateCardUseCase,
+        private val tracker: CardFormTracker,
+        private val cardFormServiceManager: CardFormServiceManager?,
+        private val liveDataProvider: CardFormWebViewLiveDataProvider = CardFormWebViewLiveDataProvider,
+        private val flowRetryProvider: FlowRetryProvider = FlowRetryProvider
 ) : BaseViewModel() {
 
     val webUiStateLiveData: LiveData<WebUiState>
@@ -149,9 +149,9 @@ internal class CardFormWebViewModel(
 
     private fun associateCard(model: AssociationModel) {
         CoroutineScope(contextProvider.Default).launch {
-            getCardAssociationId(model)?.let { cardAssociationId ->
+            getCardAssociation(model)?.let { cardAssociation ->
                 withContext(Dispatchers.Main) {
-                    coordinateResultCompletion(cardAssociationId)
+                    coordinateResultCompletion(cardAssociation.id)
                     tracker.trackEvent(
                         SuccessTrack(
                             model.bin,
@@ -174,11 +174,11 @@ internal class CardFormWebViewModel(
         } ?: sendCardResult(cardAssociationId)
     }
 
-    private suspend fun getCardAssociationId(
+    private suspend fun getCardAssociation(
         model: AssociationModel
     ) = run {
-        associatedCardUseCase.execute(
-            AssociatedCardParam(
+        associateCardUseCase.execute(
+            AssociateCardParam(
                 model.cardTokenId,
                 model.paymentMethodId,
                 model.paymentMethodType,
